@@ -1,4 +1,5 @@
-// brain.js - Dual Intelligence Engine (Offline Desi Intelligence + Gemini Cloud AI)
+// brain.js - Upgraded Dual Intelligence Engine (Instant Offline + 100% Free Public AI + Gemini)
+
 class JarvisBrain {
     constructor() {
         this.bossName = localStorage.getItem('jarvis_boss_name') || 'Boss';
@@ -25,7 +26,7 @@ class JarvisBrain {
     normalize(text) {
         return text
             .toLowerCase()
-            .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, '')
+            .replace(/[.,#!$@\^&;:{}_\`\~()?]/g, '') // Keep + - * / %
             .replace(/\s+/g, ' ')
             .trim();
     }
@@ -33,6 +34,16 @@ class JarvisBrain {
     async processQuery(rawQuery) {
         const query = this.normalize(rawQuery);
 
+        // 1. Math Calculation Check (Instant Local Zero-Latency Engine)
+        const mathRes = this.evaluateMath(query, rawQuery);
+        if (mathRes !== null) {
+            return {
+                text: `Boss, iska hisab hai: ${mathRes}`,
+                source: 'math_engine'
+            };
+        }
+
+        // 2. Offline Priority Intents (Intro, Roasts, Diagnostics, Time, Jokes)
         const offlineResponse = await this.matchOfflineIntent(query, rawQuery);
         if (offlineResponse) {
             return {
@@ -41,22 +52,51 @@ class JarvisBrain {
             };
         }
 
+        // 3. If User has configured their free Gemini API Key, use Gemini 1.5 Flash
         if (this.geminiApiKey) {
             try {
-                const onlineResponse = await this.queryGemini(rawQuery);
-                if (onlineResponse) {
+                const geminiResp = await this.queryGemini(rawQuery);
+                if (geminiResp) {
                     return {
-                        text: onlineResponse,
+                        text: geminiResp,
                         source: 'gemini'
                     };
                 }
             } catch (err) {
-                console.warn('Gemini API Error, falling back to local brain:', err);
+                console.warn('Gemini API failed, switching to Free Public AI:', err);
             }
         }
 
+        // 4. FREE UNLIMITED PUBLIC AI (No API Key Required!)
+        // Uses open public AI endpoint with CORS support
+        try {
+            const freeAiResp = await this.queryFreeAI(rawQuery);
+            if (freeAiResp) {
+                return {
+                    text: freeAiResp,
+                    source: 'free_ai'
+                };
+            }
+        } catch (err) {
+            console.warn('Free AI error, attempting Wikipedia knowledge proxy:', err);
+        }
+
+        // 5. Free Knowledge Base Proxy (Wikipedia / DuckDuckGo Instant Fact Engine)
+        try {
+            const wikiResp = await this.queryWikipedia(rawQuery);
+            if (wikiResp) {
+                return {
+                    text: wikiResp,
+                    source: 'wikipedia'
+                };
+            }
+        } catch (err) {
+            console.warn('Wiki lookup failed:', err);
+        }
+
+        // 6. Intelligent Fallback
         return {
-            text: this.getSmartFallback(rawQuery),
+            text: `Boss ${this.bossName}, maine "${rawQuery}" suna. Internet check kijiye ya mujhse koi calculation, intro ya dost ko roast karne ko boliye!`,
             source: 'fallback'
         };
     }
@@ -66,7 +106,7 @@ class JarvisBrain {
 
         // Intro / Name / Creator
         if (this.includesAny(q, ['who are you', 'tum kaun ho', 'introduce yourself', 'apna intro do', 'apna parichay', 'kaun ho tum', 'what is your name', 'tera naam kya hai'])) {
-            return `Namaste! Mera naam Jarvis hai. Mujhe mere Boss ${boss} ne design kiya hai. Main ek advanced voice-reactive AI assistant hoon. Boliye, aaj kya madad karoon?`;
+            return `Namaste! Mera naam Jarvis hai. Mujhe mere Boss ${boss} ne design kiya hai. Main ek advanced voice-reactive AI assistant hoon jo bina kisi paid API ke bhi chalta hai. Boliye, aaj kya poochhna hai?`;
         }
 
         if (this.includesAny(q, ['who made you', 'kisne banaya', 'tumhe kisne banaya', 'tera boss kaun hai', 'who is your boss', 'kiska app hai', 'creator kaun hai'])) {
@@ -82,7 +122,7 @@ class JarvisBrain {
         }
 
         // Roast Mode
-        if (this.includesAny(q, ['roast karo', 'dost ko roast', 'mere dost ko kuch bolo', 'isko roast', 'roast my friend', 'insult karo', 'kuch funny bolo dost', 'isko sunao'])) {
+        if (this.includesAny(q, ['roast karo', 'dost ko roast', 'mere dost ko kuch bolo', 'isko roast', 'roast my friend', 'insult karo', 'kuch funny bolo dost', 'isko sunao', 'dost ki beizzati'])) {
             const roasts = [
                 `Aapke dost ko dekh kar lagta hai inka dimaag flight mode par rehta hai. Jab zaroorat hoti hai tab network hi gayab!`,
                 `Inse boliye thoda kam muskuraayein. Bina kisi achievement ke itna glow sirf street light karti hai!`,
@@ -95,7 +135,7 @@ class JarvisBrain {
 
         // Praise / Taarif
         if (this.includesAny(q, ['taarif karo', 'meri taarif', 'kuch accha bolo', 'compliment me', 'praise me'])) {
-            return `Boss ${boss}, aapki intelligence aur tech swag ka koi muqabala nahi hai. Phone se itna powerful AI app live kar dena har kisi ke bas ki baat nahi hoti!`;
+            return `Boss ${boss}, aapki intelligence aur tech swag ka koi muqabala nahi hai. Phone se itna powerful voice AI app live kar dena har kisi ke bas ki baat nahi hoti!`;
         }
 
         // Shayari
@@ -115,12 +155,6 @@ class JarvisBrain {
                 `Master ji ne poocha: Sabse bada andhera kahan hota hai? Pappu bola: Wi-Fi band hone ke baad ghar ke andar!`
             ];
             return jokes[Math.floor(Math.random() * jokes.length)];
-        }
-
-        // Math
-        const mathRes = this.evaluateMath(q);
-        if (mathRes !== null) {
-            return `Boss, iska hisab hai: ${mathRes}`;
         }
 
         // Time & Date
@@ -146,29 +180,12 @@ class JarvisBrain {
                     return `Boss, phone ki battery ${level} percent hai, ${charging}`;
                 } catch(e) {}
             }
-            return `Boss, battery status access karne ke liye system ready hai. All systems nominal!`;
+            return `Boss, battery status check karne ke liye system ready hai. All systems nominal!`;
         }
 
         // System status
         if (this.includesAny(q, ['system status', 'sab theek hai', 'how are you', 'kaise ho', 'kya haal hai'])) {
-            return `All systems operational, Boss! Quantum neural visualizer 100 percent active hai aur memory fully optimized hai. Aap bataiye?`;
-        }
-
-        // GK
-        if (this.includesAny(q, ['google ka ceo', 'ceo of google'])) {
-            return `Google ke CEO Sundar Pichai hain, jo Indian-origin ke globally renowned tech leader hain.`;
-        }
-        if (this.includesAny(q, ['bharat ki rajdhani', 'capital of india'])) {
-            return `Bharat ki rajdhani New Delhi hai.`;
-        }
-        if (this.includesAny(q, ['chand par pehla', 'first man on moon'])) {
-            return `Chand par sabse pehla kadam Neil Armstrong ne saal 1969 me rakha tha.`;
-        }
-        if (this.includesAny(q, ['sabse uncha parvat', 'highest mountain'])) {
-            return `Duniya ka sabse uncha parvat Mount Everest hai, jiski unchai lagbhag 8,849 meters hai.`;
-        }
-        if (this.includesAny(q, ['ai kya hota hai', 'what is artificial intelligence', 'ai kya hai'])) {
-            return `Artificial Intelligence machine ko insani dimaag ki tarah seekhne aur smart decisions lene ki capability deta hai, jaise main aapke sath live baat kar raha hoon!`;
+            return `All systems operational, Boss! Quantum neural visualizer 100 percent active hai aur memory fully optimized hai.`;
         }
 
         // Motivation
@@ -176,56 +193,128 @@ class JarvisBrain {
             return `Boss, mushkilein sirf behtareen logon ke hisse me aati hain, kyunki wahi log unhe behtareen tareeqe se anjaam dene ki taqat rakhte hain. Lag jao kaam pe!`;
         }
 
-        // Goodbye
-        if (this.includesAny(q, ['alvida', 'bye', 'good night', 'so jao', 'chalta hoon'])) {
-            return `Theek hai Boss ${boss}. Main standby mode me ja raha hoon. Jab bhi bulaoge, ek tap me haazir ho jaunga!`;
-        }
-
         return null;
     }
 
-    evaluateMath(q) {
+    // Advanced Universal Math Engine
+    evaluateMath(q, raw) {
         try {
-            const pctMatch1 = q.match(/(\d+(?:\.\d+)?)\s*(?:ka|of)\s*(\d+(?:\.\d+)?)\s*(?:percent|pratishat|%)/);
+            // Percent: "X ka Y percent" or "Y percent of X"
+            const pctMatch1 = q.match(/(\d+(?:\.\d+)?)\s*(?:ka|of)\s*(\d+(?:\.\d+)?)\s*(?:percent|pratishat|%)/i);
             if (pctMatch1) {
                 const total = parseFloat(pctMatch1[1]);
                 const rate = parseFloat(pctMatch1[2]);
-                return `${(total * rate) / 100}`;
+                const val = (total * rate) / 100;
+                return `${val % 1 === 0 ? val : val.toFixed(2)}`;
             }
 
-            const pctMatch2 = q.match(/(\d+(?:\.\d+)?)\s*(?:percent|pratishat|%)\s*(?:ka|of)\s*(\d+(?:\.\d+)?)/);
+            const pctMatch2 = q.match(/(\d+(?:\.\d+)?)\s*(?:percent|pratishat|%)\s*(?:ka|of)\s*(\d+(?:\.\d+)?)/i);
             if (pctMatch2) {
                 const rate = parseFloat(pctMatch2[1]);
                 const total = parseFloat(pctMatch2[2]);
-                return `${(total * rate) / 100}`;
+                const val = (total * rate) / 100;
+                return `${val % 1 === 0 ? val : val.toFixed(2)}`;
             }
 
-            let cleanExpr = q
-                .replace(/plus|jod|aur|\+/g, '+')
-                .replace(/minus|ghatao|-/g, '-')
-                .replace(/into|guna|times|\*|x/g, '*')
-                .replace(/divided by|divide by|bhag|\//g, '/');
+            // Square root: "square root of X" or "X ka square root"
+            const sqrtMatch = q.match(/(?:square root of|under root of|\bsqrt\b)\s*(\d+(?:\.\d+)?)/i) || 
+                              q.match(/(\d+(?:\.\d+)?)\s*(?:ka square root|ka under root)/i);
+            if (sqrtMatch) {
+                const num = parseFloat(sqrtMatch[1]);
+                const root = Math.sqrt(num);
+                return `${root % 1 === 0 ? root : root.toFixed(2)}`;
+            }
 
-            const match = cleanExpr.match(/(\d+(?:\.\d+)?)\s*([\+\-\*\/])\s*(\d+(?:\.\d+)?)/);
+            // Normal Arithmetic Expressions
+            let cleanExpr = q
+                .replace(/plus|jod|aur/gi, '+')
+                .replace(/minus|ghatao|kam karo/gi, '-')
+                .replace(/into|guna|times/gi, '*')
+                .replace(/divided by|divide by|bhag/gi, '/');
+
+            // Find valid arithmetic pattern like "50 + 20 * 2" or "3500 / 7" or "25 * 40"
+            const mathPattern = /(\d+(?:\.\d+)?(?:\s*[\+\-\*\/]\s*\d+(?:\.\d+)?)+)/;
+            const match = cleanExpr.match(mathPattern);
             if (match) {
-                const a = parseFloat(match[1]);
-                const op = match[2];
-                const b = parseFloat(match[3]);
-                let res = 0;
-                if (op === '+') res = a + b;
-                else if (op === '-') res = a - b;
-                else if (op === '*') res = a * b;
-                else if (op === '/') res = b !== 0 ? (a / b) : 'Infinity';
-                return `${res}`;
+                const expr = match[1].replace(/\s+/g, '');
+                // Sanitize: only allow numbers, dots, and + - * /
+                if (/^[\d\+\-\*\/\.]+$/.test(expr)) {
+                    // Safe evaluation using Function
+                    const computed = Function(`'use strict'; return (${expr})`)();
+                    if (typeof computed === 'number' && !isNaN(computed) && isFinite(computed)) {
+                        return `${computed % 1 === 0 ? computed : computed.toFixed(2)}`;
+                    }
+                }
             }
         } catch(e) {}
         return null;
     }
 
-    includesAny(text, phrases) {
-        return phrases.some(p => text.includes(p));
+    // 100% Free Public AI Engine (No API Key Required!)
+    async queryFreeAI(userPrompt) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8500);
+
+        const systemPrompt = `You are Jarvis, an ultra-smart Indian voice assistant created by Boss ${this.bossName}.
+RULES:
+1. Speak in natural, friendly conversational Hinglish or simple Hindi.
+2. Answer must be STRICTLY 1 to 2 sentences maximum so it can be read aloud cleanly on mobile.
+3. Be loyal to Boss ${this.bossName}.
+4. Never use markdown formatting like asterisks or bullet points.`;
+
+        const fullPrompt = `${systemPrompt}\n\nUser Question: ${userPrompt}\nJarvis Response:`;
+        const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai&seed=42`;
+
+        try {
+            const res = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+            const text = await res.text();
+            if (text && text.trim()) {
+                let clean = text.trim()
+                    .replace(/[\*\#\_]/g, '')
+                    .replace(/^jarvis response:\s*/i, '')
+                    .replace(/^jarvis:\s*/i, '');
+                return clean;
+            }
+        } catch(e) {
+            clearTimeout(timeoutId);
+            throw e;
+        }
+        return null;
     }
 
+    // Free Wikipedia Knowledge Proxy (For facts, people, definitions)
+    async queryWikipedia(userPrompt) {
+        let topic = userPrompt
+            .replace(/(kya hai|kya hota hai|kaun hai|explain karo|batao|what is|who is|kisko bolte hain)/gi, '')
+            .trim();
+
+        if (!topic || topic.length < 2) return null;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+        try {
+            const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topic)}`;
+            const res = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (res.ok) {
+                const data = await res.json();
+                if (data.extract) {
+                    const firstSentence = data.extract.split('. ')[0] + '.';
+                    return `Boss, ${topic} ke baare me: ${firstSentence}`;
+                }
+            }
+        } catch(e) {
+            clearTimeout(timeoutId);
+        }
+        return null;
+    }
+
+    // Google Gemini 1.5 Flash (When Key is provided)
     async queryGemini(userPrompt) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.geminiApiKey}`;
         const systemInstruction = `You are Jarvis, an ultra-smart, charismatic Indian AI voice assistant created by Boss ${this.bossName}.
@@ -271,12 +360,8 @@ RULES:
         return null;
     }
 
-    getSmartFallback(rawQuery) {
-        const fallbacks = [
-            `Maine aapka sawal samjha: "${rawQuery}". Iska live answer paane ke liye Settings me free Gemini API key daal lijiye, ya mujhse Intro, Roast, ya Calculation poochhiye!`,
-            `Boss ${this.bossName}, yeh offline command list me nahi hai. Aap mujhse kisi dost ko roast karne, time/date, ya koi math calculation karne ko bol sakte hain!`
-        ];
-        return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    includesAny(text, phrases) {
+        return phrases.some(p => text.includes(p));
     }
 }
 
