@@ -1,5 +1,5 @@
 // sw.js - Service Worker for Offline PWA Support
-const CACHE_NAME = 'jarvis-ai-v2.5';
+const CACHE_NAME = 'jarvis-ai-v3.0';
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
@@ -39,7 +39,15 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
-    if (event.request.url.includes('googleapis.com')) return;
+    
+    // Always pass external AI & API calls directly to live network
+    const url = event.request.url;
+    if (url.includes('puter.com') ||
+        url.includes('wikipedia.org') ||
+        url.includes('googleapis.com') ||
+        url.includes('pollinations.ai')) {
+        return;
+    }
 
     event.respondWith(
         caches.match(event.request).then((cachedResponse) => {

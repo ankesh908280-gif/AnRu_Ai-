@@ -1,4 +1,4 @@
-// brain.js - Upgraded Dual Intelligence Engine (Instant Offline + 100% Free Public AI + Gemini)
+// brain.js - Ultimate Zero-API-Key Intelligence Engine (Puter.js + Hindi Wikipedia + Desi GK Vault)
 
 class JarvisBrain {
     constructor() {
@@ -26,7 +26,7 @@ class JarvisBrain {
     normalize(text) {
         return text
             .toLowerCase()
-            .replace(/[.,#!$@\^&;:{}_\`\~()?]/g, '') // Keep + - * / %
+            .replace(/[.,#!$@\^&;:{}_\`\~()?]/g, '')
             .replace(/\s+/g, ' ')
             .trim();
     }
@@ -34,7 +34,7 @@ class JarvisBrain {
     async processQuery(rawQuery) {
         const query = this.normalize(rawQuery);
 
-        // 1. Math Calculation Check (Instant Local Zero-Latency Engine)
+        // Tier 1: Instant Local Math Calculator (0-ms Latency, zero-internet)
         const mathRes = this.evaluateMath(query, rawQuery);
         if (mathRes !== null) {
             return {
@@ -43,77 +43,83 @@ class JarvisBrain {
             };
         }
 
-        // 2. Offline Priority Intents (Intro, Roasts, Diagnostics, Time, Jokes)
-        const offlineResponse = await this.matchOfflineIntent(query, rawQuery);
-        if (offlineResponse) {
+        // Tier 2: Core Assistant Commands (Intro, Roasts, Identity, Time, Date, Battery)
+        const offlineCoreResp = await this.matchCoreIntents(query, rawQuery);
+        if (offlineCoreResp) {
             return {
-                text: offlineResponse,
-                source: 'offline'
+                text: offlineCoreResp,
+                source: 'offline_core'
             };
         }
 
-        // 3. If User has configured their free Gemini API Key, use Gemini 1.5 Flash
+        // Tier 3: Desi GK & Word Meaning Vault (Instant offline knowledge)
+        const desiGkResp = this.matchDesiGkVault(query, rawQuery);
+        if (desiGkResp) {
+            return {
+                text: desiGkResp,
+                source: 'desi_gk_vault'
+            };
+        }
+
+        // Tier 4: Optional Gemini API (If user entered a key in settings)
         if (this.geminiApiKey) {
             try {
                 const geminiResp = await this.queryGemini(rawQuery);
                 if (geminiResp) {
-                    return {
-                        text: geminiResp,
-                        source: 'gemini'
-                    };
+                    return { text: geminiResp, source: 'gemini' };
                 }
             } catch (err) {
-                console.warn('Gemini API failed, switching to Free Public AI:', err);
+                console.warn('Gemini API call failed, falling back to Puter AI:', err);
             }
         }
 
-        // 4. FREE UNLIMITED PUBLIC AI (No API Key Required!)
-        // Uses open public AI endpoint with CORS support
+        // Tier 5: 100% Free Puter.js AI (No API Key Required!)
         try {
-            const freeAiResp = await this.queryFreeAI(rawQuery);
-            if (freeAiResp) {
-                return {
-                    text: freeAiResp,
-                    source: 'free_ai'
-                };
+            const puterResp = await this.queryPuterAI(rawQuery);
+            if (puterResp) {
+                return { text: puterResp, source: 'puter_ai' };
             }
         } catch (err) {
-            console.warn('Free AI error, attempting Wikipedia knowledge proxy:', err);
+            console.warn('Puter.js AI failed or loading, falling back to Hindi Wikipedia:', err);
         }
 
-        // 5. Free Knowledge Base Proxy (Wikipedia / DuckDuckGo Instant Fact Engine)
+        // Tier 6: Dual Hindi & English Wikipedia Search (Open free encyclopedia)
         try {
             const wikiResp = await this.queryWikipedia(rawQuery);
             if (wikiResp) {
-                return {
-                    text: wikiResp,
-                    source: 'wikipedia'
-                };
+                return { text: wikiResp, source: 'wikipedia' };
             }
         } catch (err) {
-            console.warn('Wiki lookup failed:', err);
+            console.warn('Wikipedia lookup failed:', err);
         }
 
-        // 6. Intelligent Fallback
+        // Tier 7: Free Pollinations.ai Backup
+        try {
+            const freeAiResp = await this.queryPollinationsAI(rawQuery);
+            if (freeAiResp) {
+                return { text: freeAiResp, source: 'pollinations_ai' };
+            }
+        } catch (err) {}
+
+        // Tier 8: Safe Smart Fallback
         return {
-            text: `Boss ${this.bossName}, maine "${rawQuery}" suna. Internet check kijiye ya mujhse koi calculation, intro ya dost ko roast karne ko boliye!`,
+            text: `Boss ${this.bossName}, maine "${rawQuery}" suna. Iska hisab ya info paane ke liye internet on rakhiye ya mujhse calculation ya dost ko roast karne ko boliye!`,
             source: 'fallback'
         };
     }
 
-    async matchOfflineIntent(q, raw) {
+    // --- Core Assistant Intents ---
+    async matchCoreIntents(q, raw) {
         const boss = this.bossName;
 
-        // Intro / Name / Creator
         if (this.includesAny(q, ['who are you', 'tum kaun ho', 'introduce yourself', 'apna intro do', 'apna parichay', 'kaun ho tum', 'what is your name', 'tera naam kya hai'])) {
-            return `Namaste! Mera naam Jarvis hai. Mujhe mere Boss ${boss} ne design kiya hai. Main ek advanced voice-reactive AI assistant hoon jo bina kisi paid API ke bhi chalta hai. Boliye, aaj kya poochhna hai?`;
+            return `Namaste! Mera naam Jarvis hai. Mujhe mere Boss ${boss} ne design kiya hai. Main ek advanced voice-reactive AI assistant hoon jo bina kisi API key ke bhi chalta hai. Boliye, aaj kya poochhna hai?`;
         }
 
         if (this.includesAny(q, ['who made you', 'kisne banaya', 'tumhe kisne banaya', 'tera boss kaun hai', 'who is your boss', 'kiska app hai', 'creator kaun hai'])) {
             return `Mujhe mere Boss ${boss} ne phone par coding logic aur AI prompt engineering ka use karke build kiya hai. Boss ${boss} ke aage koi bol sakta hai kya!`;
         }
 
-        // Change Boss Name
         const changeNameMatch = raw.match(/(?:mera naam|set boss name to|mera name)\s+([a-zA-Z\u0900-\u097F]+)/i);
         if (changeNameMatch && changeNameMatch[1]) {
             const newName = changeNameMatch[1].trim();
@@ -121,7 +127,6 @@ class JarvisBrain {
             return `Done! Ab se main aapko Boss ${newName} ke naam se pehchaanunga.`;
         }
 
-        // Roast Mode
         if (this.includesAny(q, ['roast karo', 'dost ko roast', 'mere dost ko kuch bolo', 'isko roast', 'roast my friend', 'insult karo', 'kuch funny bolo dost', 'isko sunao', 'dost ki beizzati'])) {
             const roasts = [
                 `Aapke dost ko dekh kar lagta hai inka dimaag flight mode par rehta hai. Jab zaroorat hoti hai tab network hi gayab!`,
@@ -133,12 +138,10 @@ class JarvisBrain {
             return roasts[Math.floor(Math.random() * roasts.length)];
         }
 
-        // Praise / Taarif
         if (this.includesAny(q, ['taarif karo', 'meri taarif', 'kuch accha bolo', 'compliment me', 'praise me'])) {
             return `Boss ${boss}, aapki intelligence aur tech swag ka koi muqabala nahi hai. Phone se itna powerful voice AI app live kar dena har kisi ke bas ki baat nahi hoti!`;
         }
 
-        // Shayari
         if (this.includesAny(q, ['shayari sunao', 'kuch shayari', 'attitude shayari', 'shayari'])) {
             const shayaris = [
                 `Hunar toh sabhi me hota hai, par chamakta wahi hai jo mehnat karta hai. Aur Boss ${boss} ka swag toh alag hi level ka hai!`,
@@ -148,7 +151,6 @@ class JarvisBrain {
             return shayaris[Math.floor(Math.random() * shayaris.length)];
         }
 
-        // Jokes
         if (this.includesAny(q, ['chutkula', 'joke', 'koi joke sunao', 'hansa do', 'funny'])) {
             const jokes = [
                 `Ek baar phone ne charger se poocha: Tum roz mujhe itna current kyu dete ho? Charger bola: Taaki tu pura din reel dekh kar mera ehsaan na bhoole!`,
@@ -157,7 +159,6 @@ class JarvisBrain {
             return jokes[Math.floor(Math.random() * jokes.length)];
         }
 
-        // Time & Date
         if (this.includesAny(q, ['kya time hua', 'time kya hai', 'time batao', 'current time', 'what time is it'])) {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('hi-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
@@ -170,7 +171,6 @@ class JarvisBrain {
             return `Boss, aaj ka din aur taareekh hai: ${dateStr}.`;
         }
 
-        // Battery
         if (this.includesAny(q, ['battery kitni hai', 'battery status', 'charge kitna hai', 'battery percentage'])) {
             if (navigator.getBattery) {
                 try {
@@ -183,23 +183,100 @@ class JarvisBrain {
             return `Boss, battery status check karne ke liye system ready hai. All systems nominal!`;
         }
 
-        // System status
         if (this.includesAny(q, ['system status', 'sab theek hai', 'how are you', 'kaise ho', 'kya haal hai'])) {
             return `All systems operational, Boss! Quantum neural visualizer 100 percent active hai aur memory fully optimized hai.`;
-        }
-
-        // Motivation
-        if (this.includesAny(q, ['motivate karo', 'motivation do', 'mann nahi lag raha', 'bore ho raha'])) {
-            return `Boss, mushkilein sirf behtareen logon ke hisse me aati hain, kyunki wahi log unhe behtareen tareeqe se anjaam dene ki taqat rakhte hain. Lag jao kaam pe!`;
         }
 
         return null;
     }
 
-    // Advanced Universal Math Engine
+    // --- Pre-loaded Desi GK & Word Meaning Vault ---
+    matchDesiGkVault(q, raw) {
+        const lower = (q + ' ' + raw).toLowerCase();
+
+        // 1. Prime Minister (PM)
+        if (lower.includes('pradhanmantri') || lower.includes('प्रधानमंत्री') || lower.includes('prime minister')) {
+            return `Bharat ke Pradhan Mantri Shri Narendra Modi hain.`;
+        }
+
+        // 2. President
+        if (lower.includes('rashtrapati') || lower.includes('राष्ट्रपति') || lower.includes('president of india')) {
+            return `Bharat ki Rashtrapati Smt. Droupadi Murmu hain.`;
+        }
+
+        // 3. Uttar Pradesh CM
+        if (lower.includes('uttar pradesh') || lower.includes('up ke') || lower.includes('उत्तर प्रदेश')) {
+            if (lower.includes('mukhyamantri') || lower.includes('मुख्यमंत्री') || lower.includes('cm')) {
+                return `Uttar Pradesh ke Mukhya Mantri Shri Yogi Adityanath hain.`;
+            }
+        }
+
+        // 4. Bihar CM
+        if (lower.includes('bihar') || lower.includes('बिहार')) {
+            if (lower.includes('mukhyamantri') || lower.includes('मुख्यमंत्री') || lower.includes('cm')) {
+                return `Bihar ke Mukhya Mantri Shri Nitish Kumar hain.`;
+            }
+        }
+
+        // 5. Capitals
+        if (lower.includes('bharat ki rajdhani') || lower.includes('capital of india') || lower.includes('भारत की राजधानी')) {
+            return `Bharat ki rajdhani New Delhi hai.`;
+        }
+        if (lower.includes('up ki rajdhani') || lower.includes('uttar pradesh ki rajdhani')) {
+            return `Uttar Pradesh ki rajdhani Lucknow hai.`;
+        }
+        if (lower.includes('bihar ki rajdhani')) {
+            return `Bihar ki rajdhani Patna hai.`;
+        }
+
+        // 6. Technology & AI
+        if (lower.includes('generative ai') || lower.includes('जेनेरेटिव आई') || lower.includes('जनरेटिव एआई')) {
+            return `Generative AI ek aisi technology hai jo naye text, images, code aur audio ko bina insani madad ke khud generate kar sakti hai.`;
+        }
+        if (lower.includes('ai kya hai') || lower.includes('artificial intelligence') || lower.includes('एआई क्या है')) {
+            return `Artificial Intelligence machine ko insani dimaag ki tarah seekhne aur smart decision lene ki taqat deta hai, jaise main aapke sath live baat kar raha hoon!`;
+        }
+        if (lower.includes('google ka ceo') || lower.includes('ceo of google')) {
+            return `Google ke CEO Sundar Pichai hain, jo Indian-origin ke globally renowned tech visionary hain.`;
+        }
+        if (lower.includes('microsoft ka ceo') || lower.includes('ceo of microsoft')) {
+            return `Microsoft ke CEO Satya Nadella hain.`;
+        }
+
+        // 7. General Knowledge
+        if (lower.includes('chand par pehla') || lower.includes('chand par kaun') || lower.includes('moon')) {
+            return `Chand par sabse pehla kadam Neil Armstrong ne saal 1969 me Apollo 11 mission ke dauran rakha tha.`;
+        }
+        if (lower.includes('suraj kya hai') || lower.includes('sun kya hai') || lower.includes('सूर्य क्या है')) {
+            return `Suraj hamare solar system ka sabse bada tara hai, jo energy aur roshni ka mukhya source hai.`;
+        }
+
+        // 8. Word Meanings (Dictionary)
+        const meaningMatch = raw.match(/([a-zA-Z]+)\s*(?:ka matlab|ka hindi meaning|meaning in hindi|ka arth)/i);
+        if (meaningMatch && meaningMatch[1]) {
+            const word = meaningMatch[1].toLowerCase();
+            const dict = {
+                'generative': 'Nirmaankari ya naya banane wala',
+                'intelligence': 'Buddhimatta ya samajhdaari',
+                'artificial': 'Kritrim ya banawati',
+                'assistant': 'Sahayak ya madadgaar',
+                'developer': 'Vikaaskarta ya software banane wala',
+                'explore': 'Khoj karna ya naye cheezon ko dekhna',
+                'achieve': 'Haasil karna ya paana',
+                'freedom': 'Azaadi ya swatantrata',
+                'knowledge': 'Gyaan ya jaankari'
+            };
+            if (dict[word]) {
+                return `"${word}" ka Hindi me matlab hota hai: ${dict[word]}.`;
+            }
+        }
+
+        return null;
+    }
+
+    // --- Math Engine ---
     evaluateMath(q, raw) {
         try {
-            // Percent: "X ka Y percent" or "Y percent of X"
             const pctMatch1 = q.match(/(\d+(?:\.\d+)?)\s*(?:ka|of)\s*(\d+(?:\.\d+)?)\s*(?:percent|pratishat|%)/i);
             if (pctMatch1) {
                 const total = parseFloat(pctMatch1[1]);
@@ -216,7 +293,6 @@ class JarvisBrain {
                 return `${val % 1 === 0 ? val : val.toFixed(2)}`;
             }
 
-            // Square root: "square root of X" or "X ka square root"
             const sqrtMatch = q.match(/(?:square root of|under root of|\bsqrt\b)\s*(\d+(?:\.\d+)?)/i) || 
                               q.match(/(\d+(?:\.\d+)?)\s*(?:ka square root|ka under root)/i);
             if (sqrtMatch) {
@@ -225,21 +301,17 @@ class JarvisBrain {
                 return `${root % 1 === 0 ? root : root.toFixed(2)}`;
             }
 
-            // Normal Arithmetic Expressions
             let cleanExpr = q
                 .replace(/plus|jod|aur/gi, '+')
                 .replace(/minus|ghatao|kam karo/gi, '-')
                 .replace(/into|guna|times/gi, '*')
                 .replace(/divided by|divide by|bhag/gi, '/');
 
-            // Find valid arithmetic pattern like "50 + 20 * 2" or "3500 / 7" or "25 * 40"
             const mathPattern = /(\d+(?:\.\d+)?(?:\s*[\+\-\*\/]\s*\d+(?:\.\d+)?)+)/;
             const match = cleanExpr.match(mathPattern);
             if (match) {
                 const expr = match[1].replace(/\s+/g, '');
-                // Sanitize: only allow numbers, dots, and + - * /
                 if (/^[\d\+\-\*\/\.]+$/.test(expr)) {
-                    // Safe evaluation using Function
                     const computed = Function(`'use strict'; return (${expr})`)();
                     if (typeof computed === 'number' && !isNaN(computed) && isFinite(computed)) {
                         return `${computed % 1 === 0 ? computed : computed.toFixed(2)}`;
@@ -250,45 +322,40 @@ class JarvisBrain {
         return null;
     }
 
-    // 100% Free Public AI Engine (No API Key Required!)
-    async queryFreeAI(userPrompt) {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8500);
+    // --- Puter.js Zero-API-Key Free AI ---
+    async queryPuterAI(userPrompt) {
+        if (typeof window.puter === 'undefined' || !window.puter.ai) {
+            return null;
+        }
 
-        const systemPrompt = `You are Jarvis, an ultra-smart Indian voice assistant created by Boss ${this.bossName}.
-RULES:
-1. Speak in natural, friendly conversational Hinglish or simple Hindi.
-2. Answer must be STRICTLY 1 to 2 sentences maximum so it can be read aloud cleanly on mobile.
-3. Be loyal to Boss ${this.bossName}.
-4. Never use markdown formatting like asterisks or bullet points.`;
+        const systemPrompt = `You are Jarvis, a charismatic Indian AI voice assistant created by Boss ${this.bossName}.
+Respond in conversational Hindi / Hinglish. Keep answers strictly 1-2 sentences so they are read aloud cleanly.
+Be helpful, clever and polite. Never use markdown asterisks or bullet points.`;
 
-        const fullPrompt = `${systemPrompt}\n\nUser Question: ${userPrompt}\nJarvis Response:`;
-        const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai&seed=42`;
+        const fullPrompt = `${systemPrompt}\n\nUser: ${userPrompt}\nJarvis:`;
 
-        try {
-            const res = await fetch(url, { signal: controller.signal });
-            clearTimeout(timeoutId);
+        const responsePromise = window.puter.ai.chat(fullPrompt);
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Puter AI timeout')), 9000)
+        );
 
-            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-            const text = await res.text();
-            if (text && text.trim()) {
-                let clean = text.trim()
-                    .replace(/[\*\#\_]/g, '')
-                    .replace(/^jarvis response:\s*/i, '')
-                    .replace(/^jarvis:\s*/i, '');
-                return clean;
-            }
-        } catch(e) {
-            clearTimeout(timeoutId);
-            throw e;
+        const res = await Promise.race([responsePromise, timeoutPromise]);
+
+        if (typeof res === 'string') {
+            return res.trim().replace(/[\*\#\_]/g, '');
+        } else if (res && res.message && res.message.content) {
+            return res.message.content.trim().replace(/[\*\#\_]/g, '');
+        } else if (res && res.text) {
+            return res.text.trim().replace(/[\*\#\_]/g, '');
         }
         return null;
     }
 
-    // Free Wikipedia Knowledge Proxy (For facts, people, definitions)
+    // --- Dual Hindi & English Wikipedia Search ---
     async queryWikipedia(userPrompt) {
+        // Clean topic query
         let topic = userPrompt
-            .replace(/(kya hai|kya hota hai|kaun hai|explain karo|batao|what is|who is|kisko bolte hain)/gi, '')
+            .replace(/(kya hai|kya hota hai|kaun hai|explain karo|batao|what is|who is|kisko bolte hain|bataiye|ke baare me batao)/gi, '')
             .trim();
 
         if (!topic || topic.length < 2) return null;
@@ -297,14 +364,28 @@ RULES:
         const timeoutId = setTimeout(() => controller.abort(), 6000);
 
         try {
-            const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topic)}`;
-            const res = await fetch(url, { signal: controller.signal });
-            clearTimeout(timeoutId);
+            // Step 1: Try Hindi Wikipedia Search API
+            const hiSearchUrl = `https://hi.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(topic)}&format=json&origin=*`;
+            const hiRes = await fetch(hiSearchUrl, { signal: controller.signal });
+            if (hiRes.ok) {
+                const hiData = await hiRes.json();
+                if (hiData.query && hiData.query.search && hiData.query.search.length > 0) {
+                    const snippet = hiData.query.search[0].snippet.replace(/<[^>]*>?/gm, '');
+                    if (snippet && snippet.length > 15) {
+                        clearTimeout(timeoutId);
+                        return `Boss, ${topic} ke baare me: ${snippet.split('. ')[0]}.`;
+                    }
+                }
+            }
 
-            if (res.ok) {
-                const data = await res.json();
-                if (data.extract) {
-                    const firstSentence = data.extract.split('. ')[0] + '.';
+            // Step 2: Try English Wikipedia Summary API
+            const enSummaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topic)}`;
+            const enRes = await fetch(enSummaryUrl, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (enRes.ok) {
+                const enData = await enRes.json();
+                if (enData.extract) {
+                    const firstSentence = enData.extract.split('. ')[0] + '.';
                     return `Boss, ${topic} ke baare me: ${firstSentence}`;
                 }
             }
@@ -314,32 +395,44 @@ RULES:
         return null;
     }
 
-    // Google Gemini 1.5 Flash (When Key is provided)
+    // --- Pollinations AI Fallback ---
+    async queryPollinationsAI(userPrompt) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 7500);
+
+        const systemPrompt = `You are Jarvis, an ultra-smart Indian voice assistant created by Boss ${this.bossName}.
+Speak in conversational Hinglish or simple Hindi. Answer strictly 1 to 2 sentences. No asterisks or formatting.`;
+
+        const fullPrompt = `${systemPrompt}\n\nUser: ${userPrompt}\nJarvis:`;
+        const url = `https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}?model=openai&seed=42`;
+
+        try {
+            const res = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (res.ok) {
+                const text = await res.text();
+                if (text && text.trim()) {
+                    return text.trim()
+                        .replace(/[\*\#\_]/g, '')
+                        .replace(/^jarvis:\s*/i, '');
+                }
+            }
+        } catch(e) {
+            clearTimeout(timeoutId);
+        }
+        return null;
+    }
+
+    // --- Gemini 1.5 Flash (If key provided) ---
     async queryGemini(userPrompt) {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.geminiApiKey}`;
         const systemInstruction = `You are Jarvis, an ultra-smart, charismatic Indian AI voice assistant created by Boss ${this.bossName}.
-Your responses are spoken aloud to the user and their friends.
-RULES:
-1. Speak in crisp, natural, conversational Hinglish (Hindi written in English alphabets) or simple Hindi.
-2. Keep answers concise: STRICTLY 1 to 2 sentences maximum.
-3. Be respectful and loyal to Boss ${this.bossName}.
-4. If asked to roast someone or be funny, deliver a witty, clever Desi punchline.
-5. Never use markdown asterisks or bullet points since your text will be read aloud.`;
+Speak in crisp conversational Hinglish. Answer strictly in 1 to 2 sentences maximum. No markdown formatting.`;
 
         const payload = {
-            contents: [
-                {
-                    role: 'user',
-                    parts: [{ text: userPrompt }]
-                }
-            ],
-            systemInstruction: {
-                parts: [{ text: systemInstruction }]
-            },
-            generationConfig: {
-                temperature: 0.8,
-                maxOutputTokens: 100
-            }
+            contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+            systemInstruction: { parts: [{ text: systemInstruction }] },
+            generationConfig: { temperature: 0.8, maxOutputTokens: 100 }
         };
 
         const res = await fetch(url, {
@@ -348,10 +441,7 @@ RULES:
             body: JSON.stringify(payload)
         });
 
-        if (!res.ok) {
-            throw new Error(`Gemini HTTP error ${res.status}`);
-        }
-
+        if (!res.ok) throw new Error(`Gemini status ${res.status}`);
         const data = await res.json();
         const candidateText = data.candidates?.[0]?.content?.parts?.[0]?.text;
         if (candidateText) {

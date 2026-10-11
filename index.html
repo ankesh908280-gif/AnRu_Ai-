@@ -11,6 +11,9 @@
     <link rel="icon" type="image/png" href="icons/favicon.png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
     
+    <!-- Free Puter.js Zero-API-Key AI Library -->
+    <script src="https://js.puter.com/v2/"></script>
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -58,6 +61,8 @@
             <button class="action-chip" data-cmd="introduce yourself">⚡ Intro Do</button>
             <button class="action-chip" data-cmd="dost ko roast karo">🔥 Dost Roast</button>
             <button class="action-chip" data-cmd="who is your boss">👑 Boss Kaun Hai?</button>
+            <button class="action-chip" data-cmd="bharat ke pradhanmantri kaun hai">🇮🇳 PM Kaun Hai?</button>
+            <button class="action-chip" data-cmd="generative ai kya hai">🤖 AI Kya Hai?</button>
             <button class="action-chip" data-cmd="shayari sunao">✨ Shayari</button>
             <button class="action-chip" data-cmd="5000 ka 18 percent">🎯 Math Hisab</button>
             <button class="action-chip" data-cmd="kya time hua hai">🕒 Time & Date</button>
@@ -90,7 +95,7 @@
 
             <div class="setting-group">
                 <label for="inputBossName">Boss Name (Aapka Naam):</label>
-                <input type="text" id="inputBossName" placeholder="Jaise: Ankit, Rahul, Aman">
+                <input type="text" id="inputBossName" placeholder="Jaise: Ankesh Kushwaha, Rahul, Aman">
             </div>
 
             <div class="setting-group">
@@ -112,9 +117,9 @@
             </div>
 
             <div class="setting-group">
-                <label for="inputApiKey">Gemini 1.5 API Key (Optional Free Upgrade):</label>
-                <input type="password" id="inputApiKey" placeholder="Paste free AI Studio key here">
-                <small style="color: var(--text-dim); font-size: 10px;">Bina API key ke bhi offline smart answers, roasts aur math 100% chalte hain.</small>
+                <label for="inputApiKey">Google Gemini API Key (Optional):</label>
+                <input type="password" id="inputApiKey" placeholder="Bina API key ke bhi Free AI 100% chalega">
+                <small style="color: #00f2fe; font-size: 10px;">★ Jarvis me Puter.js Free AI aur Hindi Wikipedia pehle se connected hai, kisi API key ki zaroorat nahi hai!</small>
             </div>
 
             <button id="saveSettingsBtn" class="save-btn">Save Configuration</button>

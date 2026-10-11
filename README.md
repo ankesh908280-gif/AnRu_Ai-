@@ -1,30 +1,39 @@
-# 🚀 JARVIS AI - Futuristic Voice Assistant PWA
+# 🚀 JARVIS AI - 100% Free & Unlimited Voice Assistant PWA (v2.0)
 
-Ek ultra-modern, futuristic Desi Voice Assistant Progressive Web App (PWA) jo bina kisi paid server ke sidhe phone ya browser me 100% fast chalta hai.
-
----
-
-## 🌟 Top Features & Wow Factors
-1. **Quantum Arc Reactor Visualizer:** Canvas-based animated glowing particle core jo aawaz aur status ke hisab se dynamically react karta hai.
-2. **Web Audio Synthesizer SFX:** Hollywood sci-fi boot chime, activation chirps aur calculation sound effects (kisi external mp3 file ki zaroorat nahi).
-3. **Dual Intelligence Brain:**
-   - **Offline Mode:** Bina internet ke instant Roasts, Intro, Hindi Shayari, Math Calculations, Time/Date aur GK Facts.
-   - **Live Gemini API Mode (Optional):** Settings me free Google AI Studio Gemini API key daalkar duniya ke kisi bhi sawal ka live voice answer payein.
-4. **Speech-to-Text & Text-to-Speech:** Hindi (`hi-IN`) aur Indian English (`en-IN`) voice support with real-time transcription.
-5. **100% PWA Ready:** Standalone fullscreen mode, offline cache support aur custom high-res futuristic icons.
+Aapke Jarvis AI ko ab **Zero-API-Key Free Engine** ke sath upgrade kar diya gaya hai. Ab kisi bhi paid API ya credit card ki zaroorat nahi hai!
 
 ---
 
-## 📱 GitHub Pages par Live Kaise Karein (1 Minute Guide)
+## ⚡ Naye Upgrades & 100% Free Jugad
 
-1. Apne GitHub account me ek naya repository banayein (e.g. `jarvis-ai`).
-2. Is folder ki saari files (`index.html`, `style.css`, `app.js`, `brain.js`, `visualizer.js`, `audio_sfx.js`, `speech.js`, `manifest.json`, `sw.js` aur `icons/` folder) upload karein.
-3. Repository ki **Settings** -> **Pages** me jayein.
-4. **Branch** me `main` (ya `master`) select karke **Save** karein.
-5. 1 se 2 minute me aapka live link ready ho jayega (e.g., `https://username.github.io/jarvis-ai/`).
+### 1. Zero-Key Free Public AI Engine (Pollinations.ai Integration)
+* **Kese chalta hai:**  ke andar direct open-access AI proxy jod di gayi hai.
+* **Fayda:** Jab bhi koi sawal poocha jayega (jaise *'Generative AI kya hai'*, *'Black hole kya hota hai'*, ya *'Chand par kaun gaya tha'*), Jarvis bina kisi API key ke live AI se smart Hinglish answer bolkar dega.
+* **Cost:** 100% FREE aur UNLIMITED.
+
+### 2. Universal Local Math Calculator (0-ms Latency)
+* Ab koi bhi hisab jaise:
+  -  -> 
+  -  -> 
+  -  -> 
+  -  -> 
+  -  -> 
+* Bina internet ya API ke turant browser ke andar 0 second me calculate karke aawaz me bolega!
+
+### 3. Google Gemini Free Tier Clarification
+* Google AI Studio ka Gemini 1.5 Flash API **100% FREE** hota hai (1,500 questions/day bilkul muft, zero credit card).
+* Agar kabhi aur zyada fast speed chahiye ho toh  par jakar 30 second me free key nikaal kar Settings me daal sakte hain, warna bina key ke bhi Free AI 100% chalta hai!
 
 ---
 
-## 📲 Phone me App ki tarah Install kaise karein?
-* **Android (Chrome):** Live link open karein -> 3 dots par tap karein -> **"Add to Home Screen"** / **"Install App"** par click karein.
-* **iPhone (Safari):** Live link open karein -> Share icon par tap karein -> **"Add to Home Screen"** select karein.
+## 📁 Modified Files in this Update:
+* : Upgraded dual intelligence with Universal Math Engine + Free Public AI endpoint + Wikipedia fallback.
+* : Updated free setup and deployment guide.
+* : Complete updated package ready for GitHub upload.
+
+---
+
+## 📱 GitHub Pages par Update Kaise Karein (30 Seconds)
+1. Apne GitHub repo me jayein.
+2. Nayi  file ko upload/replace karein (ya pura zip nikal kar replace kar dein).
+3. Commit karein — aapka live link automatically update ho jayega!
