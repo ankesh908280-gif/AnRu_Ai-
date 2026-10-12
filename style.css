@@ -208,7 +208,7 @@ body {
     backdrop-filter: blur(16px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 242, 254, 0.05);
     min-height: 115px;
-    max-height: 150px;
+    max-height: 145px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -334,14 +334,8 @@ body {
 }
 
 @keyframes rippleWave {
-    0% {
-        transform: scale(1);
-        opacity: 0.9;
-    }
-    100% {
-        transform: scale(2.2);
-        opacity: 0;
-    }
+    0% { transform: scale(1); opacity: 0.9; }
+    100% { transform: scale(2.2); opacity: 0; }
 }
 
 .text-input-drawer {
@@ -397,6 +391,131 @@ body {
     color: var(--cyan);
 }
 
+/* Realistic Fake Incoming Call Screen */
+.fake-call-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    background: #000;
+    z-index: 999;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding: 40px 24px 60px;
+}
+
+.fake-call-overlay.active {
+    display: flex;
+}
+
+.fake-call-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+}
+
+.caller-avatar-wrapper {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.caller-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 3px solid #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    position: relative;
+    z-index: 2;
+}
+
+.caller-avatar-pulse {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 2px solid #38bdf8;
+    animation: rippleWave 1.4s infinite ease-out;
+}
+
+.caller-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+}
+
+.caller-status {
+    font-size: 15px;
+    color: #94a3b8;
+    margin-bottom: 60px;
+    letter-spacing: 1px;
+}
+
+.call-duration {
+    font-size: 20px;
+    color: #10b981;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 60px;
+}
+
+.call-action-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 280px;
+    padding: 0 10px;
+}
+
+.call-decline-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #ef4444;
+    border: none;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.6);
+}
+
+.call-accept-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #10b981;
+    border: none;
+    color: #fff;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.6);
+    animation: bounce 1.2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Settings Modal */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -422,11 +541,13 @@ body {
     box-shadow: 0 0 30px var(--cyan-glow);
     border-radius: 18px;
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .modal-header {
@@ -481,6 +602,38 @@ body {
     box-shadow: 0 0 8px var(--cyan-glow);
 }
 
+.contact-inputs {
+    display: flex;
+    gap: 6px;
+}
+
+.small-btn {
+    background: var(--cyan);
+    color: var(--bg-dark);
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.contacts-pill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.contact-pill {
+    background: rgba(0, 242, 254, 0.15);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    color: var(--cyan);
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 12px;
+}
+
 .save-btn {
     background: linear-gradient(135deg, var(--cyan) 0%, #0284c7 100%);
     color: var(--bg-dark);
@@ -492,5 +645,5 @@ body {
     font-size: 14px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    margin-top: 8px;
+    margin-top: 6px;
 }

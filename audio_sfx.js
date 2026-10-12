@@ -3,6 +3,8 @@ class SoundFX {
     constructor() {
         this.ctx = null;
         this.muted = false;
+        this.ringInterval = null;
+        this.sirenOsc = null;
     }
 
     init() {
@@ -28,7 +30,6 @@ class SoundFX {
 
         const now = this.ctx.currentTime;
         const freqs = [220, 329.63, 440, 659.25, 880];
-        
         freqs.forEach((freq, idx) => {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
@@ -153,6 +154,94 @@ class SoundFX {
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.3);
+    }
+
+    // Lie Detector Bio-Scanning Tone
+    playScanner() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        for (let i = 0; i < 6; i++) {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600 + i * 150, now + i * 0.12);
+            osc.frequency.exponentialRampToValueAtTime(1400 + i * 200, now + i * 0.12 + 0.08);
+
+            gain.gain.setValueAtTime(0.08, now + i * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.1);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + i * 0.12);
+            osc.stop(now + i * 0.12 + 0.11);
+        }
+    }
+
+    // Realistic Phone Ringtone Generator
+    startRingTone() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        this.stopRingTone();
+
+        const playRingBurst = () => {
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            [440, 480].forEach(f => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(f, now);
+
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.setValueAtTime(0.12, now + 1.8);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 1.9);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 1.95);
+            });
+        };
+
+        playRingBurst();
+        this.ringInterval = setInterval(playRingBurst, 3500);
+    }
+
+    stopRingTone() {
+        if (this.ringInterval) {
+            clearInterval(this.ringInterval);
+            this.ringInterval = null;
+        }
+    }
+
+    // Timer Siren Alarm
+    playSiren() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        
+        // Siren warble
+        for (let i = 0; i < 6; i++) {
+            osc.frequency.setValueAtTime(700, now + i * 0.3);
+            osc.frequency.linearRampToValueAtTime(1100, now + i * 0.3 + 0.15);
+        }
+
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 1.85);
     }
 }
 

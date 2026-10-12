@@ -1,39 +1,56 @@
-# 🚀 JARVIS AI - 100% Free & Unlimited Voice Assistant PWA (v2.0)
+# 🚀 JARVIS AI - Phone Action Controller & Voice Assistant (v3.0)
 
-Aapke Jarvis AI ko ab **Zero-API-Key Free Engine** ke sath upgrade kar diya gaya hai. Ab kisi bhi paid API ya credit card ki zaroorat nahi hai!
-
----
-
-## ⚡ Naye Upgrades & 100% Free Jugad
-
-### 1. Zero-Key Free Public AI Engine (Pollinations.ai Integration)
-* **Kese chalta hai:**  ke andar direct open-access AI proxy jod di gayi hai.
-* **Fayda:** Jab bhi koi sawal poocha jayega (jaise *'Generative AI kya hai'*, *'Black hole kya hota hai'*, ya *'Chand par kaun gaya tha'*), Jarvis bina kisi API key ke live AI se smart Hinglish answer bolkar dega.
-* **Cost:** 100% FREE aur UNLIMITED.
-
-### 2. Universal Local Math Calculator (0-ms Latency)
-* Ab koi bhi hisab jaise:
-  -  -> 
-  -  -> 
-  -  -> 
-  -  -> 
-  -  -> 
-* Bina internet ya API ke turant browser ke andar 0 second me calculate karke aawaz me bolega!
-
-### 3. Google Gemini Free Tier Clarification
-* Google AI Studio ka Gemini 1.5 Flash API **100% FREE** hota hai (1,500 questions/day bilkul muft, zero credit card).
-* Agar kabhi aur zyada fast speed chahiye ho toh  par jakar 30 second me free key nikaal kar Settings me daal sakte hain, warna bina key ke bhi Free AI 100% chalta hai!
+Aapka personal, futuristic Sci-Fi Voice Assistant aur Phone Action Controller jo **bina kisi Google API key ke 100% free chalta hai.**
 
 ---
 
-## 📁 Modified Files in this Update:
-* : Upgraded dual intelligence with Universal Math Engine + Free Public AI endpoint + Wikipedia fallback.
-* : Updated free setup and deployment guide.
-* : Complete updated package ready for GitHub upload.
+## ⚡ 1. Voice Action & Phone Controller Commands (Doston ke beech Asli Rola)
+
+### 📞 Phone Call Commands:
+* *"Papa ko call lagao"* ➔ Phone dialer me Papa ka number direct open ho jayega.
+* *"Rahul ko call karo"* ➔ Rahul ka number dial ho jayega.
+* *"Call 9876543210"* ➔ Direct dialer khul jayega.
+*(Settings ⚙️ me jakar aap apne doston/gharwalon ke naam aur phone number save kar sakte hain).*
+
+### 💬 WhatsApp Messenger:
+* *"WhatsApp par message bhejo Main 10 minute me aa raha hoon"* ➔ WhatsApp me message pehle se type hokar open ho jayega, bas send dabana hai!
+* *"Papa ko WhatsApp karo"* ➔ Direct Papa ki chat open ho jayegi.
+
+### ▶️ App Launchers:
+* *"YouTube kholo"* ➔ YouTube app khulega.
+* *"YouTube par Arijit Singh ke gaane chalao"* ➔ YouTube me gaane search hokar khulenge.
+* *"Instagram open karo"* ➔ Instagram app open hoga.
+* *"Spotify kholo"* ➔ Spotify app open hoga.
+* *"Google Maps par Lucknow ka rasta dikhao"* ➔ Maps me navigation khul jayega.
+
+### 🔦 Hardware & Sensor Commands:
+* *"Torch on karo"* / *"Flashlight on karo"* ➔ Phone ki piche ki flashlight jal jayegi!
+* *"Torch off karo"* ➔ Flashlight band ho jayegi.
+* *"Alert mode"* / *"Vibrate karo"* ➔ Phone me haptic vibration pulse hoga.
+* *"Meri location batao"* ➔ Live GPS se aapki location batayega.
+* *"Timer lagao 30 second"* ➔ 30s ka live countdown aur baad me Sci-Fi siren alarm bajega!
 
 ---
 
-## 📱 GitHub Pages par Update Kaise Karein (30 Seconds)
-1. Apne GitHub repo me jayein.
-2. Nayi  file ko upload/replace karein (ya pura zip nikal kar replace kar dein).
-3. Commit karein — aapka live link automatically update ho jayega!
+## 🕵️ 2. Social & Entertainment Modes:
+
+* **AI Lie Detector / Bullshit Scanner:**
+  - Boliye: *"Lie detector mode"* ya *"Check karo ye sach bol raha hai ya jhooth"*
+  - Jarvis biometric scan sound nikaalega aur bolega: *"Bio-Scan Complete: 98% fekugiri pakdi gayi hai... ye banda safed jhooth bol raha hai!"*
+* **Emergency Fake Call (Rescue Mode):**
+  - Boliye: *"Fake call lagao"* ya *"Emergency rescue me"*
+  - 5 second baad screen par realistic incoming call aayegi (Papa Urgent Calling) with ringing sound aur Accept/Decline button!
+
+---
+
+## 🧠 3. Intelligence, GK & Math (100% Free & No-API-Key):
+* **Indian Politics & GK:** *"Bharat ke Pradhan Mantri kaun hai"*, *"Rashtrapati kaun hai"*, *"UP ke CM kaun hai"*.
+* **Universal Math:** *"5000 ka 18 percent"*, *"25 * 40"*, *"3600 / 6"*, *"square root of 144"*.
+* **Free Puter.js AI:** Kisi bhi word ka Hindi meaning, Generative AI explanation, Black hole, etc.
+
+---
+
+## 📱 GitHub Pages par Update Kaise Karein (1 Minute):
+1. Is ZIP file ko extract karein.
+2. Apne GitHub repository (`h908280-gif.github.io`) par files upload/replace kar dein (`index.html`, `style.css`, `app.js`, `brain.js`, `audio_sfx.js`, `sw.js`).
+3. **Commit changes** karein — aapka live link update ho jayega!

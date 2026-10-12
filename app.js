@@ -1,9 +1,11 @@
-// app.js - Master Controller for Jarvis AI PWA
+// app.js - Master Controller for Jarvis AI PWA with Hardware & Action Handlers
+
 document.addEventListener('DOMContentLoaded', () => {
     const visualizer = new window.QuantumVisualizer('orbCanvas');
     const sfx = window.soundFX;
     const brain = new window.JarvisBrain();
 
+    // DOM Elements
     const micBtn = document.getElementById('micBtn');
     const orbStatusLabel = document.getElementById('orbStatusLabel');
     const userSpeechText = document.getElementById('userSpeechText');
@@ -23,18 +25,60 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputBossName = document.getElementById('inputBossName');
     const selectPersonality = document.getElementById('selectPersonality');
     const selectLanguage = document.getElementById('selectLanguage');
-    const inputApiKey = document.getElementById('inputApiKey');
     const actionChips = document.querySelectorAll('.action-chip');
+
+    // Fake Call Elements
+    const fakeCallOverlay = document.getElementById('fakeCallOverlay');
+    const fakeCallerName = document.getElementById('fakeCallerName');
+    const fakeCallerStatus = document.getElementById('fakeCallerStatus');
+    const fakeCallDuration = document.getElementById('fakeCallDuration');
+    const fakeCallDeclineBtn = document.getElementById('fakeCallDeclineBtn');
+    const fakeCallAcceptBtn = document.getElementById('fakeCallAcceptBtn');
+
+    // VIP Contacts Elements
+    const contactNameInput = document.getElementById('contactNameInput');
+    const contactPhoneInput = document.getElementById('contactPhoneInput');
+    const addContactBtn = document.getElementById('addContactBtn');
+    const contactsListDisplay = document.getElementById('contactsListDisplay');
 
     let isSfxMuted = false;
     let isProcessing = false;
     let typeInterval = null;
+    let torchStream = null;
+    let fakeCallTimer = null;
+    let activeCallDurationTimer = null;
 
     function updateTelemetry() {
         bossDisplay.textContent = `BOSS: ${brain.bossName.toUpperCase()}`;
         voiceLangDisplay.textContent = (localStorage.getItem('jarvis_lang') || 'hi-IN').toUpperCase();
     }
     updateTelemetry();
+
+    function renderContactsList() {
+        if (!contactsListDisplay) return;
+        contactsListDisplay.innerHTML = '';
+        const contacts = brain.getContacts();
+        for (const [name, phone] of Object.entries(contacts)) {
+            const pill = document.createElement('span');
+            pill.className = 'contact-pill';
+            pill.textContent = `${name.toUpperCase()}: ${phone}`;
+            contactsListDisplay.appendChild(pill);
+        }
+    }
+    renderContactsList();
+
+    if (addContactBtn) {
+        addContactBtn.addEventListener('click', () => {
+            const name = contactNameInput.value.trim();
+            const phone = contactPhoneInput.value.trim();
+            if (name && phone) {
+                brain.saveContact(name, phone);
+                contactNameInput.value = '';
+                contactPhoneInput.value = '';
+                renderContactsList();
+            }
+        });
+    }
 
     const speech = new window.SpeechController({
         onStart: () => {
@@ -93,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!queryText || !queryText.trim() || isProcessing) return;
 
         isProcessing = true;
-        orbStatusLabel.textContent = 'PROCESSING // NEURAL BRAIN';
+        orbStatusLabel.textContent = 'PROCESSING // COMMAND';
         visualizer.setState('processing');
         sfx.playProcessing();
 
@@ -104,6 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
             displayTypewriter(answer);
             sfx.playResponse();
             speech.speak(answer);
+
+            // Execute Action Command if present
+            if (result.action) {
+                executeAction(result.action);
+            }
         } catch (err) {
             console.error('Error handling query:', err);
             isProcessing = false;
@@ -125,9 +174,179 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 clearInterval(typeInterval);
             }
-        }, 18);
+        }, 16);
     }
 
+    // --- Action Executor ---
+    async function executeAction(act) {
+        switch (act.type) {
+            case 'CALL':
+                setTimeout(() => {
+                    window.location.href = `tel:${act.number}`;
+                }, 1200);
+                break;
+
+            case 'WHATSAPP':
+                setTimeout(() => {
+                    let waUrl = 'https://api.whatsapp.com/send?';
+                    if (act.phone) waUrl += `phone=${encodeURIComponent(act.phone)}&`;
+                    waUrl += `text=${encodeURIComponent(act.message)}`;
+                    window.open(waUrl, '_blank');
+                }, 1200);
+                break;
+
+            case 'OPEN_APP':
+                setTimeout(() => {
+                    if (act.app === 'youtube') {
+                        const ytUrl = act.query 
+                            ? `https://www.youtube.com/results?search_query=${encodeURIComponent(act.query)}`
+                            : 'https://www.youtube.com';
+                        window.open(ytUrl, '_blank');
+                    } else if (act.app === 'instagram') {
+                        window.open('https://instagram.com', '_blank');
+                    } else if (act.app === 'spotify') {
+                        window.open('https://open.spotify.com', '_blank');
+                    } else if (act.app === 'maps') {
+                        window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(act.query || '')}`, '_blank');
+                    } else if (act.app === 'google') {
+                        window.open(`https://www.google.com/search?q=${encodeURIComponent(act.query || '')}`, '_blank');
+                    }
+                }, 1200);
+                break;
+
+            case 'TORCH':
+                await toggleTorch(act.state === 'on');
+                break;
+
+            case 'VIBRATE':
+                if (navigator.vibrate) {
+                    navigator.vibrate([200, 100, 200, 100, 400]);
+                }
+                break;
+
+            case 'LOCATION':
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            const lat = pos.coords.latitude.toFixed(4);
+                            const lon = pos.coords.longitude.toFixed(4);
+                            const locMsg = `Live GPS: Lat ${lat}, Lon ${lon}. Region: Uttar Pradesh, India.`;
+                            displayTypewriter(locMsg);
+                            speech.speak(locMsg);
+                        },
+                        () => {
+                            const failMsg = "Boss, location permission block hai. Browser settings me allow karein.";
+                            displayTypewriter(failMsg);
+                            speech.speak(failMsg);
+                        }
+                    );
+                }
+                break;
+
+            case 'FAKE_CALL':
+                startFakeCallSequence(act.delay || 5, act.caller || 'Papa (Urgent)');
+                break;
+
+            case 'LIE_DETECTOR':
+                sfx.playScanner();
+                visualizer.setState('processing');
+                break;
+
+            case 'TIMER':
+                startTimer(act.seconds || 30);
+                break;
+
+            case 'OPEN_SETTINGS':
+                setTimeout(() => {
+                    settingsBtn.click();
+                }, 1000);
+                break;
+        }
+    }
+
+    // Flashlight Controller
+    async function toggleTorch(turnOn) {
+        try {
+            if (turnOn) {
+                if (!torchStream) {
+                    torchStream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: 'environment' }
+                    });
+                }
+                const track = torchStream.getVideoTracks()[0];
+                await track.applyConstraints({ advanced: [{ torch: true }] });
+            } else {
+                if (torchStream) {
+                    const track = torchStream.getVideoTracks()[0];
+                    await track.applyConstraints({ advanced: [{ torch: false }] });
+                    torchStream.getTracks().forEach(t => t.stop());
+                    torchStream = null;
+                }
+            }
+        } catch (e) {
+            console.warn('Torch control error/not supported:', e);
+        }
+    }
+
+    // Fake Emergency Call System
+    function startFakeCallSequence(delaySeconds, callerName) {
+        fakeCallerName.textContent = callerName;
+        fakeCallerStatus.textContent = 'Incoming Call...';
+        fakeCallDuration.style.display = 'none';
+
+        setTimeout(() => {
+            fakeCallOverlay.classList.add('active');
+            sfx.startRingTone();
+            if (navigator.vibrate) {
+                navigator.vibrate([500, 250, 500, 250, 500]);
+            }
+        }, delaySeconds * 1000);
+    }
+
+    fakeCallDeclineBtn.addEventListener('click', () => {
+        sfx.stopRingTone();
+        fakeCallOverlay.classList.remove('active');
+        if (activeCallDurationTimer) {
+            clearInterval(activeCallDurationTimer);
+            activeCallDurationTimer = null;
+        }
+    });
+
+    fakeCallAcceptBtn.addEventListener('click', () => {
+        sfx.stopRingTone();
+        fakeCallerStatus.textContent = 'Connected (Call Active)';
+        fakeCallDuration.style.display = 'block';
+        fakeCallDuration.textContent = '00:01';
+
+        let seconds = 1;
+        activeCallDurationTimer = setInterval(() => {
+            seconds++;
+            const mins = String(Math.floor(seconds / 60)).padStart(2, '0');
+            const secs = String(seconds % 60).padStart(2, '0');
+            fakeCallDuration.textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        speech.speak("Hello Boss, urgent rescue call active. Aap situation se safely exit kar sakte hain.");
+    });
+
+    // Countdown Timer
+    function startTimer(seconds) {
+        let remaining = seconds;
+        const interval = setInterval(() => {
+            remaining--;
+            orbStatusLabel.textContent = `TIMER // ${remaining}s`;
+            if (remaining <= 0) {
+                clearInterval(interval);
+                orbStatusLabel.textContent = 'TIMER FINISHED!';
+                sfx.playSiren();
+                const finishMsg = "Boss, timer khatam ho gaya hai!";
+                displayTypewriter(finishMsg);
+                speech.speak(finishMsg);
+            }
+        }, 1000);
+    }
+
+    // Button Listeners
     micBtn.addEventListener('click', () => {
         triggerFirstInteraction();
         speech.toggleListening();
@@ -177,7 +396,7 @@ document.addEventListener('DOMContentLoaded', () => {
         inputBossName.value = brain.bossName;
         selectPersonality.value = brain.personality;
         selectLanguage.value = speech.language;
-        inputApiKey.value = brain.geminiApiKey;
+        renderContactsList();
         settingsModal.classList.add('open');
     });
 
@@ -195,7 +414,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const newBoss = inputBossName.value.trim() || 'Boss';
         brain.setBossName(newBoss);
         brain.setPersonality(selectPersonality.value);
-        brain.setApiKey(inputApiKey.value.trim());
 
         const newLang = selectLanguage.value;
         speech.setLanguage(newLang);

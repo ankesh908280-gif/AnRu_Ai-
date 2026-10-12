@@ -1,10 +1,20 @@
-// brain.js - Ultimate Zero-API-Key Intelligence Engine (Puter.js + Hindi Wikipedia + Desi GK Vault)
+// brain.js - Master Intelligence Engine with Actions, Hardware & AI
 
 class JarvisBrain {
     constructor() {
         this.bossName = localStorage.getItem('jarvis_boss_name') || 'Boss';
         this.personality = localStorage.getItem('jarvis_personality') || 'savage';
         this.geminiApiKey = localStorage.getItem('jarvis_gemini_key') || '';
+        
+        // VIP Contacts (Saved in localStorage)
+        const savedContacts = localStorage.getItem('jarvis_contacts');
+        this.contacts = savedContacts ? JSON.parse(savedContacts) : {
+            'papa': '9876543210',
+            'mummy': '9876543211',
+            'bhai': '9876543212',
+            'rahul': '9876543213',
+            'dost': '9876543214'
+        };
     }
 
     setBossName(name) {
@@ -23,6 +33,16 @@ class JarvisBrain {
         localStorage.setItem('jarvis_gemini_key', this.geminiApiKey);
     }
 
+    saveContact(name, phone) {
+        if (!name || !phone) return;
+        this.contacts[name.toLowerCase().trim()] = phone.trim();
+        localStorage.setItem('jarvis_contacts', JSON.stringify(this.contacts));
+    }
+
+    getContacts() {
+        return this.contacts;
+    }
+
     normalize(text) {
         return text
             .toLowerCase()
@@ -34,7 +54,13 @@ class JarvisBrain {
     async processQuery(rawQuery) {
         const query = this.normalize(rawQuery);
 
-        // Tier 1: Instant Local Math Calculator (0-ms Latency, zero-internet)
+        // 1. Action Commands (Call, WhatsApp, Apps, Torch, Location, Fake Call, Timer)
+        const actionResult = this.parseActionCommand(query, rawQuery);
+        if (actionResult) {
+            return actionResult;
+        }
+
+        // 2. Math Calculations (0-Latency Local Math Engine)
         const mathRes = this.evaluateMath(query, rawQuery);
         if (mathRes !== null) {
             return {
@@ -43,7 +69,7 @@ class JarvisBrain {
             };
         }
 
-        // Tier 2: Core Assistant Commands (Intro, Roasts, Identity, Time, Date, Battery)
+        // 3. Core Assistant Commands (Intro, Roasts, Identity, Time, Date, Battery)
         const offlineCoreResp = await this.matchCoreIntents(query, rawQuery);
         if (offlineCoreResp) {
             return {
@@ -52,7 +78,7 @@ class JarvisBrain {
             };
         }
 
-        // Tier 3: Desi GK & Word Meaning Vault (Instant offline knowledge)
+        // 4. Desi GK & Word Meaning Vault (Instant offline knowledge)
         const desiGkResp = this.matchDesiGkVault(query, rawQuery);
         if (desiGkResp) {
             return {
@@ -61,7 +87,7 @@ class JarvisBrain {
             };
         }
 
-        // Tier 4: Optional Gemini API (If user entered a key in settings)
+        // 5. Optional Gemini API (If configured)
         if (this.geminiApiKey) {
             try {
                 const geminiResp = await this.queryGemini(rawQuery);
@@ -73,7 +99,7 @@ class JarvisBrain {
             }
         }
 
-        // Tier 5: 100% Free Puter.js AI (No API Key Required!)
+        // 6. Free Puter.js AI (No API Key Required!)
         try {
             const puterResp = await this.queryPuterAI(rawQuery);
             if (puterResp) {
@@ -83,7 +109,7 @@ class JarvisBrain {
             console.warn('Puter.js AI failed or loading, falling back to Hindi Wikipedia:', err);
         }
 
-        // Tier 6: Dual Hindi & English Wikipedia Search (Open free encyclopedia)
+        // 7. Dual Hindi & English Wikipedia Search
         try {
             const wikiResp = await this.queryWikipedia(rawQuery);
             if (wikiResp) {
@@ -93,7 +119,7 @@ class JarvisBrain {
             console.warn('Wikipedia lookup failed:', err);
         }
 
-        // Tier 7: Free Pollinations.ai Backup
+        // 8. Pollinations AI Fallback
         try {
             const freeAiResp = await this.queryPollinationsAI(rawQuery);
             if (freeAiResp) {
@@ -101,11 +127,219 @@ class JarvisBrain {
             }
         } catch (err) {}
 
-        // Tier 8: Safe Smart Fallback
+        // 9. Intelligent Fallback
         return {
-            text: `Boss ${this.bossName}, maine "${rawQuery}" suna. Iska hisab ya info paane ke liye internet on rakhiye ya mujhse calculation ya dost ko roast karne ko boliye!`,
+            text: `Boss ${this.bossName}, maine "${rawQuery}" suna. Iska answer paane ke liye internet on rakhiye ya mujhse Call, WhatsApp ya koi calculation karne ko boliye!`,
             source: 'fallback'
         };
+    }
+
+    // --- Action Parser ---
+    parseActionCommand(q, raw) {
+        const boss = this.bossName;
+
+        // 1. FAKE EMERGENCY CALL (Must be checked BEFORE generic call!)
+        if (q.includes('fake call') || q.includes('emergency call') || q.includes('rescue me') || q.includes('mujhe call karo')) {
+            return {
+                text: `Emergency Rescue Mode armed. 5 second me incoming call aa rahi hai, Boss!`,
+                source: 'action',
+                action: { type: 'FAKE_CALL', delay: 5, caller: 'Papa (Urgent)' }
+            };
+        }
+
+        // 2. AI LIE DETECTOR / BULLSHIT SCANNER
+        if (q.includes('lie detector') || q.includes('sach bol raha hai ya jhooth') || q.includes('pol kholo') || q.includes('sach bol raha')) {
+            const verdicts = [
+                `Bio-Scan Complete: Voice frequencies me 98% fekugiri aur 2% sach detect hua hai. Report: Ye banda safed jhooth bol raha hai!`,
+                `Scanning Complete: Inki heartbeat aur speech pattern me 100% bluff pakda gaya hai. Inse bolo pichhla udhaar pehle chukayein!`,
+                `Polygraph Analysis: Shakal aur aawaz match nahi ho rahi. Dimaag 144p quality par jhooth fabricate kar raha hai!`,
+                `Truth Scanner: Wah Boss! Inki baaton me sach ka ek katra bhi nahi hai, pura hava me teer chal raha hai!`
+            ];
+            const verdict = verdicts[Math.floor(Math.random() * verdicts.length)];
+            return {
+                text: verdict,
+                source: 'action',
+                action: { type: 'LIE_DETECTOR' }
+            };
+        }
+
+        // 3. FLASHLIGHT / TORCH
+        if (q.includes('torch on') || q.includes('flashlight on') || q.includes('torch jalao') || q.includes('लाइट ऑन')) {
+            return {
+                text: `Flashlight ON kar di hai, Boss!`,
+                source: 'action',
+                action: { type: 'TORCH', state: 'on' }
+            };
+        }
+        if (q.includes('torch off') || q.includes('flashlight off') || q.includes('torch band') || q.includes('लाइट बंद')) {
+            return {
+                text: `Flashlight OFF kar di hai, Boss!`,
+                source: 'action',
+                action: { type: 'TORCH', state: 'off' }
+            };
+        }
+
+        // 4. PHONE CALL ACTION
+        const isCallCmd = q.includes('call') || q.includes('kall') || q.includes('फोन लगाओ') || q.includes('कॉल करो');
+        if (isCallCmd) {
+            // Check direct 10-digit number in query
+            const numMatch = raw.match(/\b(\d{10})\b/);
+            if (numMatch) {
+                const number = numMatch[1];
+                return {
+                    text: `Connecting call to ${number}, Boss!`,
+                    source: 'action',
+                    action: { type: 'CALL', number: number, name: number }
+                };
+            }
+
+            // Check contact name in query
+            for (const [name, phone] of Object.entries(this.contacts)) {
+                if (q.includes(name)) {
+                    return {
+                        text: `Connecting call to ${name.toUpperCase()}, Boss!`,
+                        source: 'action',
+                        action: { type: 'CALL', number: phone, name: name }
+                    };
+                }
+            }
+
+            // Extract target name if after "call" or before "ko call"
+            const nameMatch = raw.match(/([a-zA-Z\u0900-\u097F]+)\s*(?:ko call|ko फोन)/i) || 
+                              raw.match(/(?:call|phone)\s*([a-zA-Z\u0900-\u097F]+)/i);
+            if (nameMatch && nameMatch[1]) {
+                let targetName = nameMatch[1].toLowerCase().trim();
+                if (!['lagao', 'karo', 'kijiye', 'bhai', 'please', 'fake'].includes(targetName)) {
+                    const phone = this.contacts[targetName] || '';
+                    if (phone) {
+                        return {
+                            text: `Connecting call to ${targetName.toUpperCase()}, Boss!`,
+                            source: 'action',
+                            action: { type: 'CALL', number: phone, name: targetName }
+                        };
+                    } else {
+                        return {
+                            text: `Boss, ${targetName} ka number contacts me nahi mila. Settings me ja kar number save kar lijiye.`,
+                            source: 'action',
+                            action: { type: 'OPEN_SETTINGS' }
+                        };
+                    }
+                }
+            }
+        }
+
+        // 5. WHATSAPP ACTION
+        if (q.includes('whatsapp') || q.includes('व्हाट्सएप')) {
+            let msg = raw
+                .replace(/.*(?:whatsapp par bolo|whatsapp par message bhejo|whatsapp par bhejo|whatsapp message|whatsapp karo|whatsapp par likho)\s*/i, '')
+                .replace(/.*(?:whatsapp)\s*/i, '')
+                .trim();
+
+            if (!msg) msg = "Hello from Boss!";
+
+            let targetPhone = '';
+            for (const [name, phone] of Object.entries(this.contacts)) {
+                if (q.includes(name)) {
+                    targetPhone = phone;
+                    break;
+                }
+            }
+
+            return {
+                text: `Opening WhatsApp, Boss! Message तैयार है.`,
+                source: 'action',
+                action: { type: 'WHATSAPP', message: msg, phone: targetPhone }
+            };
+        }
+
+        // 6. APP LAUNCHERS
+        if (q.includes('youtube') || q.includes('यूट्यूब')) {
+            const queryMatch = raw.match(/(?:youtube par|youtube me|youtube)\s*(?:search karo|gaana chalao|chalao|kholo)?\s*(.*)/i);
+            let searchTopic = queryMatch && queryMatch[1] ? queryMatch[1].trim() : '';
+            searchTopic = searchTopic.replace(/(gaana chalao|search karo|kholo|open karo)/gi, '').trim();
+
+            if (searchTopic && searchTopic.length > 1) {
+                return {
+                    text: `YouTube par ${searchTopic} chala raha hoon, Boss!`,
+                    source: 'action',
+                    action: { type: 'OPEN_APP', app: 'youtube', query: searchTopic }
+                };
+            } else {
+                return {
+                    text: `Opening YouTube, Boss!`,
+                    source: 'action',
+                    action: { type: 'OPEN_APP', app: 'youtube' }
+                };
+            }
+        }
+
+        if (q.includes('instagram') || q.includes('इंस्टाग्राम')) {
+            return {
+                text: `Opening Instagram, Boss!`,
+                source: 'action',
+                action: { type: 'OPEN_APP', app: 'instagram' }
+            };
+        }
+
+        if (q.includes('spotify') || q.includes('स्पॉटिफ़ाई')) {
+            return {
+                text: `Opening Spotify, Boss!`,
+                source: 'action',
+                action: { type: 'OPEN_APP', app: 'spotify' }
+            };
+        }
+
+        if (q.includes('maps') || q.includes('rasta dikhao') || q.includes('रास्ता दिखाओ')) {
+            let dest = raw
+                .replace(/.*(?:maps par|maps me|rasta dikhao|navigation)\s*/i, '')
+                .replace(/(kholo|open karo)/gi, '')
+                .replace(/\s*ka rasta.*$/i, '')
+                .trim();
+            if (!dest) {
+                const m = raw.match(/([a-zA-Z\u0900-\u097F]+)\s*ka rasta/i);
+                if (m) dest = m[1].trim();
+            }
+
+            return {
+                text: `Opening Google Maps for ${dest || 'Navigation'}, Boss!`,
+                source: 'action',
+                action: { type: 'OPEN_APP', app: 'maps', query: dest || 'Kanpur' }
+            };
+        }
+
+        if (q.includes('google par search') || q.includes('google search')) {
+            let term = raw.replace(/.*(?:google par search karo|google search karo|google search)\s*/i, '').trim();
+            return {
+                text: `Searching Google for ${term}, Boss!`,
+                source: 'action',
+                action: { type: 'OPEN_APP', app: 'google', query: term }
+            };
+        }
+
+        // 7. TIMER / ALARM
+        const timerMatch = raw.match(/(\d+)\s*(?:second|sec|minute|min)\s*(?:ka timer|timer)/i) ||
+                           raw.match(/timer\s*(?:lagao)?\s*(\d+)\s*(second|sec|minute|min)?/i);
+        if (timerMatch) {
+            let val = parseInt(timerMatch[1], 10);
+            let unit = (timerMatch[2] || '').toLowerCase();
+            let totalSeconds = unit.includes('min') ? val * 60 : val;
+            return {
+                text: `${val} ${unit.includes('min') ? 'minute' : 'second'} ka timer shuru kar diya hai, Boss!`,
+                source: 'action',
+                action: { type: 'TIMER', seconds: totalSeconds }
+            };
+        }
+
+        // 8. GPS LOCATION
+        if (q.includes('meri location') || q.includes('main kahan hoon') || q.includes('current location')) {
+            return {
+                text: `Boss, GPS satellites connect kar raha hoon. Aapki live location screen par aa rahi hai.`,
+                source: 'action',
+                action: { type: 'LOCATION' }
+            };
+        }
+
+        return null;
     }
 
     // --- Core Assistant Intents ---
@@ -113,7 +347,7 @@ class JarvisBrain {
         const boss = this.bossName;
 
         if (this.includesAny(q, ['who are you', 'tum kaun ho', 'introduce yourself', 'apna intro do', 'apna parichay', 'kaun ho tum', 'what is your name', 'tera naam kya hai'])) {
-            return `Namaste! Mera naam Jarvis hai. Mujhe mere Boss ${boss} ne design kiya hai. Main ek advanced voice-reactive AI assistant hoon jo bina kisi API key ke bhi chalta hai. Boliye, aaj kya poochhna hai?`;
+            return `Namaste! Mera naam Jarvis hai. Mujhe mere Boss ${boss} ne design kiya hai. Main ek advanced voice AI hoon jo aapke bolne par Call, WhatsApp, YouTube, Flashlight aur sawalon ke jawab deta hai. Boliye, kya command hai?`;
         }
 
         if (this.includesAny(q, ['who made you', 'kisne banaya', 'tumhe kisne banaya', 'tera boss kaun hai', 'who is your boss', 'kiska app hai', 'creator kaun hai'])) {
@@ -184,52 +418,38 @@ class JarvisBrain {
         }
 
         if (this.includesAny(q, ['system status', 'sab theek hai', 'how are you', 'kaise ho', 'kya haal hai'])) {
-            return `All systems operational, Boss! Quantum neural visualizer 100 percent active hai aur memory fully optimized hai.`;
+            return `All systems operational, Boss! Call actions, WhatsApp messenger aur visualizer fully ready hain.`;
         }
 
         return null;
     }
 
-    // --- Pre-loaded Desi GK & Word Meaning Vault ---
+    // --- Desi GK & Word Meaning Vault ---
     matchDesiGkVault(q, raw) {
         const lower = (q + ' ' + raw).toLowerCase();
 
-        // 1. Prime Minister (PM)
         if (lower.includes('pradhanmantri') || lower.includes('प्रधानमंत्री') || lower.includes('prime minister')) {
             return `Bharat ke Pradhan Mantri Shri Narendra Modi hain.`;
         }
-
-        // 2. President
         if (lower.includes('rashtrapati') || lower.includes('राष्ट्रपति') || lower.includes('president of india')) {
             return `Bharat ki Rashtrapati Smt. Droupadi Murmu hain.`;
         }
-
-        // 3. Uttar Pradesh CM
         if (lower.includes('uttar pradesh') || lower.includes('up ke') || lower.includes('उत्तर प्रदेश')) {
             if (lower.includes('mukhyamantri') || lower.includes('मुख्यमंत्री') || lower.includes('cm')) {
                 return `Uttar Pradesh ke Mukhya Mantri Shri Yogi Adityanath hain.`;
             }
         }
-
-        // 4. Bihar CM
         if (lower.includes('bihar') || lower.includes('बिहार')) {
             if (lower.includes('mukhyamantri') || lower.includes('मुख्यमंत्री') || lower.includes('cm')) {
                 return `Bihar ke Mukhya Mantri Shri Nitish Kumar hain.`;
             }
         }
-
-        // 5. Capitals
         if (lower.includes('bharat ki rajdhani') || lower.includes('capital of india') || lower.includes('भारत की राजधानी')) {
             return `Bharat ki rajdhani New Delhi hai.`;
         }
         if (lower.includes('up ki rajdhani') || lower.includes('uttar pradesh ki rajdhani')) {
             return `Uttar Pradesh ki rajdhani Lucknow hai.`;
         }
-        if (lower.includes('bihar ki rajdhani')) {
-            return `Bihar ki rajdhani Patna hai.`;
-        }
-
-        // 6. Technology & AI
         if (lower.includes('generative ai') || lower.includes('जेनेरेटिव आई') || lower.includes('जनरेटिव एआई')) {
             return `Generative AI ek aisi technology hai jo naye text, images, code aur audio ko bina insani madad ke khud generate kar sakti hai.`;
         }
@@ -239,19 +459,10 @@ class JarvisBrain {
         if (lower.includes('google ka ceo') || lower.includes('ceo of google')) {
             return `Google ke CEO Sundar Pichai hain, jo Indian-origin ke globally renowned tech visionary hain.`;
         }
-        if (lower.includes('microsoft ka ceo') || lower.includes('ceo of microsoft')) {
-            return `Microsoft ke CEO Satya Nadella hain.`;
-        }
-
-        // 7. General Knowledge
         if (lower.includes('chand par pehla') || lower.includes('chand par kaun') || lower.includes('moon')) {
             return `Chand par sabse pehla kadam Neil Armstrong ne saal 1969 me Apollo 11 mission ke dauran rakha tha.`;
         }
-        if (lower.includes('suraj kya hai') || lower.includes('sun kya hai') || lower.includes('सूर्य क्या है')) {
-            return `Suraj hamare solar system ka sabse bada tara hai, jo energy aur roshni ka mukhya source hai.`;
-        }
 
-        // 8. Word Meanings (Dictionary)
         const meaningMatch = raw.match(/([a-zA-Z]+)\s*(?:ka matlab|ka hindi meaning|meaning in hindi|ka arth)/i);
         if (meaningMatch && meaningMatch[1]) {
             const word = meaningMatch[1].toLowerCase();
@@ -353,7 +564,6 @@ Be helpful, clever and polite. Never use markdown asterisks or bullet points.`;
 
     // --- Dual Hindi & English Wikipedia Search ---
     async queryWikipedia(userPrompt) {
-        // Clean topic query
         let topic = userPrompt
             .replace(/(kya hai|kya hota hai|kaun hai|explain karo|batao|what is|who is|kisko bolte hain|bataiye|ke baare me batao)/gi, '')
             .trim();
@@ -364,7 +574,6 @@ Be helpful, clever and polite. Never use markdown asterisks or bullet points.`;
         const timeoutId = setTimeout(() => controller.abort(), 6000);
 
         try {
-            // Step 1: Try Hindi Wikipedia Search API
             const hiSearchUrl = `https://hi.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(topic)}&format=json&origin=*`;
             const hiRes = await fetch(hiSearchUrl, { signal: controller.signal });
             if (hiRes.ok) {
@@ -378,7 +587,6 @@ Be helpful, clever and polite. Never use markdown asterisks or bullet points.`;
                 }
             }
 
-            // Step 2: Try English Wikipedia Summary API
             const enSummaryUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topic)}`;
             const enRes = await fetch(enSummaryUrl, { signal: controller.signal });
             clearTimeout(timeoutId);

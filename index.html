@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#07080d">
-    <meta name="description" content="Jarvis AI - Futuristic Desi Voice Assistant PWA with Quantum Visualizer">
+    <meta name="description" content="Jarvis AI - Futuristic Phone Controller & Voice Assistant PWA">
     <title>Jarvis AI - Voice Assistant</title>
     
     <link rel="manifest" href="manifest.json">
@@ -21,12 +21,13 @@
     <div class="bg-radial"></div>
 
     <div class="app-container">
+        <!-- Top HUD Header -->
         <header class="top-hud">
             <div class="brand-section">
                 <img src="icons/icon-192.png" alt="Jarvis Core" class="hud-logo">
                 <div>
                     <div class="brand-title">JARVIS AI</div>
-                    <div class="brand-subtitle">Quantum Neural v2.5</div>
+                    <div class="brand-subtitle">Quantum Neural v3.0</div>
                 </div>
             </div>
             <div class="hud-actions">
@@ -35,12 +36,14 @@
             </div>
         </header>
 
+        <!-- Telemetry Status Bar -->
         <div class="telemetry-bar">
             <span><span class="status-dot"></span><span id="connStatus">SYSTEM READY</span></span>
             <span id="bossDisplay">BOSS: BOSS</span>
             <span id="voiceLangDisplay">HI-IN</span>
         </div>
 
+        <!-- Center Visualizer Reactor Orb -->
         <main class="visualizer-section">
             <div class="canvas-wrapper">
                 <canvas id="orbCanvas"></canvas>
@@ -48,33 +51,42 @@
             <div class="status-label" id="orbStatusLabel">STANDBY // READY</div>
         </main>
 
+        <!-- Dialogue & Response Box -->
         <section class="dialogue-card">
             <div class="user-transcript" id="userTranscript">
-                <span class="prefix">Aap:</span> <span id="userSpeechText">Mic dabakar boliye...</span>
+                <span class="prefix">Aap:</span> <span id="userSpeechText">Mic dabakar command boliye...</span>
             </div>
             <div class="jarvis-response" id="jarvisResponseText">
-                "Namaste Boss! Main Jarvis hoon. Screen par mic tap kijiye ya neeche diye gaye chips par click kijiye."
+                "Namaste Boss! Main Jarvis hoon. Boliye kisko Call milana hai, WhatsApp bhejna hai, ya koi sawal poochhna hai?"
             </div>
         </section>
 
+        <!-- Quick Action Chips (Swipeable on Mobile) -->
         <nav class="chips-container" aria-label="Quick Commands">
-            <button class="action-chip" data-cmd="introduce yourself">⚡ Intro Do</button>
+            <button class="action-chip" data-cmd="papa ko call lagao">📞 Call Papa</button>
+            <button class="action-chip" data-cmd="whatsapp par message bhejo Main 10 minute me aa raha hoon">💬 WhatsApp Msg</button>
+            <button class="action-chip" data-cmd="youtube par gaana chalao">▶️ YouTube</button>
+            <button class="action-chip" data-cmd="torch on karo">🔦 Torch On</button>
+            <button class="action-chip" data-cmd="torch off karo">🌑 Torch Off</button>
+            <button class="action-chip" data-cmd="fake call lagao">🚨 Fake Call</button>
+            <button class="action-chip" data-cmd="lie detector mode">🕵️ Lie Detector</button>
             <button class="action-chip" data-cmd="dost ko roast karo">🔥 Dost Roast</button>
-            <button class="action-chip" data-cmd="who is your boss">👑 Boss Kaun Hai?</button>
             <button class="action-chip" data-cmd="bharat ke pradhanmantri kaun hai">🇮🇳 PM Kaun Hai?</button>
             <button class="action-chip" data-cmd="generative ai kya hai">🤖 AI Kya Hai?</button>
-            <button class="action-chip" data-cmd="shayari sunao">✨ Shayari</button>
             <button class="action-chip" data-cmd="5000 ka 18 percent">🎯 Math Hisab</button>
             <button class="action-chip" data-cmd="kya time hua hai">🕒 Time & Date</button>
             <button class="action-chip" data-cmd="battery kitni hai">🔋 Battery Status</button>
         </nav>
 
+        <!-- Bottom Controls -->
         <footer class="bottom-controls">
+            <!-- Text Input Fallback Drawer -->
             <div class="text-input-drawer" id="textInputDrawer">
                 <input type="text" id="manualInput" class="hud-input" placeholder="Type command here..." enterkeyhint="send">
                 <button id="manualSendBtn" class="send-btn">SEND</button>
             </div>
 
+            <!-- Mic Trigger Orb -->
             <div class="mic-wrapper">
                 <button id="micBtn" class="mic-btn" aria-label="Toggle Microphone">
                     🎤
@@ -86,6 +98,29 @@
         </footer>
     </div>
 
+    <!-- Full-Screen Realistic Fake Incoming Call Screen -->
+    <div class="fake-call-overlay" id="fakeCallOverlay">
+        <div class="fake-call-card">
+            <div class="caller-avatar-wrapper">
+                <div class="caller-avatar">👤</div>
+                <div class="caller-avatar-pulse"></div>
+            </div>
+            <h2 class="caller-name" id="fakeCallerName">Papa (Urgent)</h2>
+            <p class="caller-status" id="fakeCallerStatus">Incoming Call...</p>
+            <p class="call-duration" id="fakeCallDuration" style="display: none;">00:00</p>
+
+            <div class="call-action-buttons">
+                <button class="call-decline-btn" id="fakeCallDeclineBtn" title="Decline Call">
+                    ❌
+                </button>
+                <button class="call-accept-btn" id="fakeCallAcceptBtn" title="Accept Call">
+                    📞
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
     <div class="modal-overlay" id="settingsModal">
         <div class="settings-card">
             <div class="modal-header">
@@ -116,10 +151,15 @@
                 </select>
             </div>
 
+            <!-- VIP Contacts Section -->
             <div class="setting-group">
-                <label for="inputApiKey">Google Gemini API Key (Optional):</label>
-                <input type="password" id="inputApiKey" placeholder="Bina API key ke bhi Free AI 100% chalega">
-                <small style="color: #00f2fe; font-size: 10px;">★ Jarvis me Puter.js Free AI aur Hindi Wikipedia pehle se connected hai, kisi API key ki zaroorat nahi hai!</small>
+                <label>VIP Contacts (Voice Call ke liye):</label>
+                <div class="contact-inputs">
+                    <input type="text" id="contactNameInput" placeholder="Name (e.g. Papa, Rohit)" style="flex: 1;">
+                    <input type="tel" id="contactPhoneInput" placeholder="Phone Number" style="flex: 1;">
+                    <button id="addContactBtn" class="small-btn">+ Save</button>
+                </div>
+                <div id="contactsListDisplay" class="contacts-pill-list"></div>
             </div>
 
             <button id="saveSettingsBtn" class="save-btn">Save Configuration</button>
